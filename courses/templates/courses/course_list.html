@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}课程列表 - 校园门户{% endblock %}
+
+{% block content %}
+<h2>课程列表</h2>
+<ul class="list-group">
+    {% for course in courses %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ course.name }}</strong><br>
+                {{ course.description }}<br>
+                上课时间: {{ course.get_day_of_week_display }} - {{ course.get_class_period_display }}
+            </div>
+            <a href="{% url 'enroll_course' course.id %}" class="btn btn-success btn-sm">选课</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

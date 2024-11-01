@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}我的课程 - 校园门户{% endblock %}
+
+{% block content %}
+<h2 class="text-center">我的课程时间表</h2>
+
+<div class="container">
+    <div id="schedule" class="table-responsive">
+        <table class="table custom-schedule-table text-center">
+            <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>周一</th>
+                    <th>周二</th>
+                    <th>周三</th>
+                    <th>周四</th>
+                    <th>周五</th>
+                    <th>周六</th>
+                    <th>周日</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for period, time_range in period_times.items %}
+                    <tr>
+                        <th>{{ time_range }}</th>
+                        {% for day in days_of_week %}
+                            <td id="cell-{{ day }}-{{ period }}" data-day="{{ day }}" data-period="{{ period }}">
+                                <!-- JavaScript 将填充课程 -->
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{ schedule|json_script:"schedule-data" }}
+
+<script>
+    const scheduleData = JSON.parse(document.getElementById("schedule-data").textContent);
+
+    document.addEventListener("DOMContentLoaded", function() {
+        for (const [day, periods] of Object.entries(scheduleData)) {
+            for (const [period, course] of Object.entries(periods)) {
+                const cell = document.getElementById(`cell-${day}-${period}`);
+                if (cell) {
+                    cell.innerHTML = `<strong>${course.name}</strong><br>${course.description}`;
+                    cell.style.backgroundColor = "#d1e7dd"; // 绿色背景色
+                }
+            }
+        }
+    });
+</script>
+
+<style>
+    /* 调整课程表大小和样式 */
+    .custom-schedule-table {
+        width: 100%;                 /* 使表格全宽 */
+        max-width: 1200px;            /* 最大宽度 */
+        margin: auto;                /* 居中 */
+        border-collapse: collapse;   /* 去掉默认表格间距 */
+        font-size: 1.1rem;           /* 字体大小 */
+    }
+    
+    .custom-schedule-table th,
+    .custom-schedule-table td {
+        border: 2px solid black;     /* 设置黑色边框 */
+        padding: 20px;               /* 单元格内边距 */
+        width: 12.5%;                /* 等分宽度 */
+    }
+    
+    .custom-schedule-table th {
+        background-color: #f8f9fa;   /* 设置表头背景色 */
+        font-weight: bold;
+    }
+
+    .custom-schedule-table td {
+        min-height: 80px;            /* 增加单元格高度 */
+    }
+</style>
+{% endblock %}
